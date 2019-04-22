@@ -43,8 +43,8 @@ ID_reps <- c("C323 Inoculum", "C323 Fresh A", "C323 Fresh B","C323 Fresh C","C32
              "D046 Inoculum", "D046 Fresh A", "D046 Fresh B", "D046 Fresh C","D046 Recycled A","D046 Recycled B","D046 Recycled C",
              "Navicula Inoculum", "Navicula Fresh A", "Navicula Fresh B","Navicula Fresh C","Navicula Recycled A", "Navicula Recycled B", "Navicula Recycled C")
 
-ID_labels <- c("C323 Inoculum", "C323 Fresh","C323 Recycled", 
-               "D046 Inoculum", "D046 Fresh", "D046 Recycled", 
+ID_labels <- c("C323 Inoculum", "C323 Fresh","C323 Recycled",
+               "D046 Inoculum", "D046 Fresh", "D046 Recycled",
                "Navicula Inoculum", "Navicula Fresh", "Navicula Recycled")
 
 # Vectors of colors & shapes to use for plots
@@ -76,6 +76,7 @@ legend <- c(expression(paste(italic("Staurosira"), " sp. Inoculum")), expression
             expression(paste(italic("Chlorella"), " sp. Inoculum")), expression(paste(italic("Chlorella"), " sp. Fresh")), expression(paste(italic("Chlorella"), " sp. Reused")),
             expression(paste(italic("Navicula"), " sp. Inoculum")), expression(paste(italic("Navicula"), " sp. Fresh")), expression(paste(italic("Navicula"), " sp. Reused")))
 
+### NMDS ###
 
 # vegan package to calculate nMDS values using Relative Abundance data
 
@@ -104,7 +105,6 @@ bray_MDS_noSpiro <- metaMDS(comm = as.matrix(no_spiro_rownames_f_relative), dist
 #          panel.border = element_rect(color = "gray60", fil = NA), 
 #          axis.ticks = element_blank(),
 #          axis.text = element_text(size = 12))
-      
 
 # points + ellipses - whole community
 pdf("figures/Fig4_NMDS.pdf", width = 6, height = 4.5)
@@ -135,16 +135,17 @@ text(x= -1, y = 1, cex = 0.8, labels = paste("Stress =", format(bray_MDS_noSpiro
 dev.off()
 
 
-# Plot species richness bar graph
+### OTU richness ###
 
 # species richness
 spec_rich <- as.data.frame(specnumber(otutable_rownames_f))
 spec_rich$sample <- ID_reps
 names(spec_rich)[1] <- "spec_rich"
 
-#reorder the levels
+# reorder the levels
 spec_rich$sample <- factor(spec_rich$sample, levels = ID_reps)
 
+# plot bar graph
 spec_rich_plot <- ggplot(data = spec_rich, aes(x = sample, y = spec_rich, fill = ID_all)) +
   geom_bar(stat = "identity") +
   scale_fill_manual(breaks = ID_labels, values = color_assign, labels = legend) +
@@ -160,17 +161,17 @@ spec_rich_plot <- ggplot(data = spec_rich, aes(x = sample, y = spec_rich, fill =
         legend.title = element_blank(),
         legend.text.align = 0)
 
-pdf("Figures/FigS5_OTU_richness.pdf", 
+pdf("figures/FigS5_OTU_richness.pdf", 
     width = 7, height = 4.5)
 grid.draw(spec_rich_plot)
 dev.off()
   
 
-####### Community level analyses #########
+### Community level analyses ###
 
-# Test Fresh vs Recycled final communities
+# Test Fresh vs Reused final communities
 # Create data frame for treatment
-treatment <- as.factor(c(rep("Fresh", 3), rep("Recycled", 3)))
+treatment <- as.factor(c(rep("Fresh", 3), rep("Reused", 3)))
 
 # Create permutation matrix to use for sample combinations
   # Number of possible combinations of the 6 samples is (6!/((6-3)!3!) )/2
@@ -180,13 +181,6 @@ combos <- combn(6,3)
 perm_matrix <- t(rbind(combos[, 1:10], combos[, 20:11]))[2:10, ] # append the combos matrix & transpose so each row is a combination of 1-6; remove the first row because this is the given data set
 
 
-# Adonis
-C323.adonis <- adonis(otutable_rownames_f_relative[2:7, ] ~ treatment, method = "bray", permutations = perm_matrix)
-
-D046.adonis <- adonis(otutable_rownames_f_relative[9:14, ] ~ treatment, method = "bray", permutations = perm_matrix)
-
-Navi.adonis <- adonis(otutable_rownames_f_relative[16:21, ] ~ treatment, method = "bray", permutations = perm_matrix)
-
 # Anosim
 C323.anosim <- anosim(otutable_rownames_f_relative[2:7, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
@@ -195,14 +189,7 @@ D046.anosim <- anosim(otutable_rownames_f_relative[9:14, ], grouping = treatment
 Navi.anosim <- anosim(otutable_rownames_f_relative[16:21, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
 
-## Also test with taking out the Spirochetes from the average table since these were contaminants. 
-
-# Adonis
-C323.adonis_no_spiro <- adonis(no_spiro_rownames_f_relative[2:7, ] ~ treatment, method = "bray", permutations = perm_matrix)
-
-D046.adonis_no_spiro <- adonis(no_spiro_rownames_f_relative[9:14, ] ~ treatment, method = "bray", permutations = perm_matrix)
-
-Navi.adonis_no_spiro <- adonis(no_spiro_rownames_f_relative[16:21, ] ~ treatment, method = "bray", permutations = perm_matrix)
+## Also test with taking out the Spirochetes since these were contaminants. 
 
 # Anosim
 C323.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[2:7, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
@@ -215,8 +202,7 @@ Navi.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[16:21, ], grouping =
 ### Community composition plot at family level ###
 
 # Read in fmaily classification table
-otu_family_legend_file <- "RDP_OTU_family_key.txt"
-otu_family_legend <- read.delim(otu_family_legend_file, header = T)  
+otu_family_legend <- read.delim("input_data/RDP_OTU_family_key.txt", header = T)  
 
 # Make absolute OTU table
 otutable_absolute <- otutable[, 1:(ncol(otutable)-1)]
@@ -234,7 +220,8 @@ otu_table_family %>%
   group_by(sample, Family_Legend) %>% 
   summarize(fam_abundance = sum(abundance)) -> summed_families_by_sample
 
-# Find the top families in the whole dataset. Choose to keep original name for taxa that make up at least 0.1% of the whole dataset, rename the others as "other" OR group into phylum level Other group if they will collectively make up more than 0.1% as a collective other group
+# Find the top families in the whole dataset. Choose to keep original name for taxa that make up at least 1% of the whole dataset, 
+# rename the others as "other" OR group into phylum level Other group if they will collectively make up more than 1% as a collective other group
 summed_families_by_sample %>% 
   select(-sample) %>% 
   group_by(Family_Legend) %>% 
@@ -273,25 +260,21 @@ legend_order <- c ( "Spirochaetaceae",
                    "Cryomorphaceae", "Balneolaceae", # Bacteroidetes
                    "Phyllobacteriaceae", "Hyphomonadaceae", "Rhodobacteraceae", "Rhodospirillaceae", "Erythrobacteraceae", "Other_Alphaproteobacteria", # Alphaproteobacteria
                    "Alteromonadaceae", "Other_Gammaproteobacteria", # Gammaproteobacteria
-                   "Other") # Other (taxa less than 0.1% of total dataset and not belonging to a group below)
+                   "Other") # Other (taxa less than 1% of total dataset and not belonging to a group below)
 
 summed_families_by_sample_legend$legend_label <- factor(summed_families_by_sample_legend$legend_label, levels = legend_order)
 
-# New legend names
+# Updated legend names
 legend_name <- c ( "Spirochaetaceae",
-                     "Plantomycetaceae",
-                  "Cryomorphaceae", "[Balneolaceae]", # Bacteroidetes
-                     "Phyllobacteriaceae", "Hyphomonadaceae", "Rhodobacteraceae", "Rhodospirillaceae", "Erythrobacteraceae", "Other Alphaproteobacteria", # Alphaproteobacteria
-   "Alteromonadaceae", "Other Gammaproteobacteria", # Gammaproteobacteria
-   "Other Bacteria") # Other (taxa less than 0.1% of total dataset and not belonging to a group above) 
+                   "Plantomycetaceae",
+                   "Cryomorphaceae", "[Balneolaceae]", # Bacteroidetes
+                   "Phyllobacteriaceae", "Hyphomonadaceae", "Rhodobacteraceae", "Rhodospirillaceae", "Erythrobacteraceae", "Other Alphaproteobacteria", # Alphaproteobacteria
+                   "Alteromonadaceae", "Other Gammaproteobacteria", # Gammaproteobacteria
+                   "Other Bacteria") # Other (taxa less than 1% of total dataset and not belonging to a group above) 
    
 
 # Make color palette
 colorCount <-  length(unique(summed_families_by_sample_legend$legend_label))
-# getPalette <-  colorRampPalette(brewer.pal(11, 'Spectral'))
-# getPalette(colorCount)
-# lacroix_palette("PassionFruit", type = "continuous", n = colorCount)
-
 
 # Plot each algae separately then combine. Legend retains all families even if they're not in the sample.
 
@@ -361,11 +344,12 @@ Navi_family_plot <- ggplot(data = filter(summed_families_by_sample_legend, sampl
   grid.newpage()
   grid.draw(family_gridplot)
   
-  # Save plot as pdf file
-  pdf("Figures/Fig3_family_composition.pdf", 
+  # Save plot as pdf file. Edit x-axis using visual software. 
+  pdf("figures/Fig3_family_composition.pdf", 
       width = 7.5, height = 4.5)
   grid.draw(family_gridplot)
   dev.off()  
+  
   
 
 
