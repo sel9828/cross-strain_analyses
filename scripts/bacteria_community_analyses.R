@@ -47,16 +47,12 @@ ID_labels <- c("C323 Inoculum", "C323 Fresh","C323 Recycled",
                "D046 Inoculum", "D046 Fresh", "D046 Recycled", 
                "Navicula Inoculum", "Navicula Fresh", "Navicula Recycled")
 
-# ID_no_inoc <- c(rep("C323 Fresh", 3), rep("C323 Recycled", 3), rep("D046 Fresh", 3), 
-#         rep("D046 Recycled", 3), rep("Navicula Fresh", 3), rep("Navicula Recycled", 3))
-
-
 # Vectors of colors & shapes to use for plots
 color_all <- c("gray79", rep('gray63', 3), rep('gray43', 3), 
                 "darkolivegreen1",rep('green3', 3), rep('green4', 3),
                 "lightblue3", rep('dodgerblue2', 3), rep('dodgerblue4', 3))
 
-color <- c('gray63', "gray79", 'gray43', # Note: the order is different here to match the ggplot default of alphabetically ordering the IDs, so the Inoc and Fresh colors are switched
+# color <- c('gray63', "gray79", 'gray43', # Note: the order is different here to match the ggplot default of alphabetically ordering the IDs, so the Inoc and Fresh colors are switched
            'green3', "darkolivegreen1", 'green4',
            'dodgerblue2', "lightblue3", 'dodgerblue4') 
 
@@ -70,7 +66,7 @@ color_no_inoc <- c('gray63', 'gray43',
 
 shape_all <- c(rep(16, 7), rep(17, 7), rep(15, 7))
 
-shape <- c(rep(16, 3), rep(17, 3), rep(15, 3))
+# shape <- c(rep(16, 3), rep(17, 3), rep(15, 3))
 
 shape_no_inoc <- c(rep(16, 2), rep(17, 2), rep(15, 2))
 
@@ -88,30 +84,30 @@ bray_MDS <- metaMDS(comm = as.matrix(otutable_rownames_f_relative), distance = "
 bray_MDS_noSpiro <- metaMDS(comm = as.matrix(no_spiro_rownames_f_relative), distance = "bray", k = 2)
       
 
-# plots
+# NMDS plots
       
-# ggplot
-ggplot_NMDS = data.frame(NMDS1 = bray_MDS$points[,1], NMDS2 = bray_MDS$points[,2])      
-
-ggplot(data = ggplot_NMDS, aes(x = NMDS1, y = NMDS2, color = ID_all, shape = ID_all)) +
-  geom_point(size = 4) +
-  scale_color_manual(breaks = ID_labels, values = color) +
-  scale_shape_manual(breaks = ID_labels, values = shape) +
-  theme( legend.background = element_rect(fill = "white"),  # removes color from behind legned points/lines
-         legend.key = element_rect(fill = "white"),
-         legend.title = element_blank(),
-         legend.text = element_text(size = 10),
-         legend.text.align = 0,
-         panel.background = element_rect(fill = NA),
-         panel.grid.major = element_line(colour = "gray87", size = 0.2),
-         panel.grid.minor = element_line(colour = "gray90", size = 0.2),
-         panel.border = element_rect(color = "gray60", fil = NA), 
-         axis.ticks = element_blank(),
-         axis.text = element_text(size = 12))
+# # ggplot - whole community
+# ggplot_NMDS = data.frame(NMDS1 = bray_MDS$points[,1], NMDS2 = bray_MDS$points[,2])      
+# 
+# ggplot(data = ggplot_NMDS, aes(x = NMDS1, y = NMDS2, color = ID_all, shape = ID_all)) +
+#   geom_point(size = 4) +
+#   scale_color_manual(breaks = ID_labels, values = color) +
+#   scale_shape_manual(breaks = ID_labels, values = shape) +
+#   theme( legend.background = element_rect(fill = "white"),  # removes color from behind legned points/lines
+#          legend.key = element_rect(fill = "white"),
+#          legend.title = element_blank(),
+#          legend.text = element_text(size = 10),
+#          legend.text.align = 0,
+#          panel.background = element_rect(fill = NA),
+#          panel.grid.major = element_line(colour = "gray87", size = 0.2),
+#          panel.grid.minor = element_line(colour = "gray90", size = 0.2),
+#          panel.border = element_rect(color = "gray60", fil = NA), 
+#          axis.ticks = element_blank(),
+#          axis.text = element_text(size = 12))
       
 
-# points + ellipses
-pdf("Figures/Fig4_NMDS.pdf", width = 6, height = 4.5)
+# points + ellipses - whole community
+pdf("figures/Fig4_NMDS.pdf", width = 6, height = 4.5)
 
 par(xpd = TRUE, mar = par()$mar + c(0,0,0,7)) # add room for legend
 ellipse_plot <- ordiplot(bray_MDS, type = "none", las = 1, tck = 0.025)  # save the plot data in a plot object
@@ -124,7 +120,19 @@ text(x= -1, y = 1, cex = 0.8, labels = paste("Stress =", format(bray_MDS$stress,
 
 dev.off()
 
-# conf limit = 0.95; sd is multipled by value of 0.95 chi squared distribution with 2df (???)
+# points + ellipses - no Spirochaetes
+pdf("figures/FigSX_NMDS_noSpiro.pdf", width = 6, height = 4.5)
+
+par(xpd = TRUE, mar = par()$mar + c(0,0,0,7)) # add room for legend
+ellipse_plot <- ordiplot(bray_MDS_noSpiro, type = "none", las = 1, tck = 0.025)  # save the plot data in a plot object
+points(ellipse_plot, "sites", pch= shape_all, col= color_all, cex = 1.1)  # add points, color & shape vectors that have a specific shape/color for each individual point
+# add ellipses
+ordiellipse(bray_MDS_noSpiro, groups = ID_all, display = "sites", draw = "lines",
+            col = color, kind = "sd", conf = 0.95, lwd = 1.75)
+legend(x = 1, y = 0.8, legend = legend, col = color_assign, pch = shape, cex = 0.8, pt.cex = 1.1, bty = "n") 
+text(x= -1, y = 1, cex = 0.8, labels = paste("Stress =", format(bray_MDS_noSpiro$stress, digits=2)))
+
+dev.off()
 
 
 # Plot species richness bar graph
