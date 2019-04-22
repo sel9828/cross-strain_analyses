@@ -22,8 +22,17 @@ otutable_relative <- read.delim("input_data/Data4_Relative_OTUs.txt", skip = 1, 
 otutable_rownames_relative <- data.frame(otutable_relative[,-1], row.names=otutable_relative[,1])
 otutable_rownames_f_relative <- t(otutable_rownames_relative[, 1:(ncol(otutable_rownames_relative)-1)]) # transpose & remove taxonomy data (last column)
 
-# remove inoculum samples
-otutable_relative_no_inoc <- otutable_rownames_f_relative[-c(1, 8, 15), ]
+    # remove inoculum samples
+    otutable_relative_no_inoc <- otutable_rownames_f_relative[-c(1, 8, 15), ]
+
+# Relative abundance OTU table recalculated without the family Spirochaetacaceae (OTUs 16 and 27) 
+no_spiro_relative <- read.delim("input_data/Data5_Relative_OTUs_noSpiro.txt", skip = 1, header = T)  
+no_spiro_rownames_relative <- data.frame(no_spiro_relative[,-1], row.names=no_spiro_relative[,1])
+no_spiro_rownames_f_relative <- t(no_spiro_rownames_relative[, 1:(ncol(no_spiro_rownames_relative)-1)]) # transpose & remove taxonomy data (last column)
+
+    # remove inoculum samples
+    no_spiro_relative_no_inoc <- no_spiro_rownames_f_relative[-c(1, 8, 15), ]
+
 
 # Create a vector to use for differentiating points by color + shape on the figure
 ID_all <- c("C323 Inoculum", rep("C323 Fresh", 3), rep("C323 Recycled", 3), 
@@ -72,20 +81,12 @@ legend <- c(expression(paste(italic("Staurosira"), " sp. Inoculum")), expression
             expression(paste(italic("Navicula"), " sp. Inoculum")), expression(paste(italic("Navicula"), " sp. Fresh")), expression(paste(italic("Navicula"), " sp. Reused")))
 
 
-# # NMDS plot from QIIME commands data
-# data <- data.frame(beta_div_table)
-# data$ID <- ID
-# sp <- ggplot(data, aes(NMDS1, NMDS2, color = ID)) + geom_point()
-
-
-# vegan package to calculate nMDS values using RELATIVE ABUNDANCE data
+# vegan package to calculate nMDS values using Relative Abundance data
 
 bray_MDS <- metaMDS(comm = as.matrix(otutable_rownames_f_relative), distance = "bray", k = 2)
 
-bray_MDS_no_inoc <- metaMDS(comm = as.matrix(otutable_relative_no_inoc), distance = "bray", k = 2) # the values will change because inoculum points are no longer included
-
-      # see stepwise 
-      stressplot(bray_MDS)
+bray_MDS_noSpiro <- metaMDS(comm = as.matrix(no_spiro_rownames_f_relative), distance = "bray", k = 2)
+      
 
 # plots
       
@@ -108,13 +109,6 @@ ggplot(data = ggplot_NMDS, aes(x = NMDS1, y = NMDS2, color = ID_all, shape = ID_
          axis.ticks = element_blank(),
          axis.text = element_text(size = 12))
       
-# polygons
-ordiplot(bray_MDS, display = "sites")
-ordihull(bray_MDS,groups=ID_all,draw="polygon",col="grey90",label=FALSE)
-
-ordiplot(bray_MDS_no_inoc, display = "sites")
-ordihull(bray_MDS_no_inoc,groups=ID_no_inoc,draw="polygon",col="grey90",label=FALSE)
-
 
 # points + ellipses
 pdf("Figures/Fig4_NMDS.pdf", width = 6, height = 4.5)
@@ -130,13 +124,8 @@ text(x= -1, y = 1, cex = 0.8, labels = paste("Stress =", format(bray_MDS$stress,
 
 dev.off()
 
-
 # conf limit = 0.95; sd is multipled by value of 0.95 chi squared distribution with 2df (???)
 
-# no inoculum
-ordiplot(bray_MDS_no_inoc, display = "sites")
-ordiellipse(bray_MDS_no_inoc, groups = ID_no_inoc, display = "sites", draw = "polygon",
-            col = color_no_inoc, alpha= "200", kind = "sd", conf = 0.95)
 
 # Plot species richness bar graph
 
@@ -198,16 +187,7 @@ D046.anosim <- anosim(otutable_rownames_f_relative[9:14, ], grouping = treatment
 Navi.anosim <- anosim(otutable_rownames_f_relative[16:21, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
 
-## Also test with taking out the Spirochetes from the average table since these were contaminants. Recalculate the relative abundances as OTU reads/total reads.
-# Spirochaetes = OTU 16, 27. Removed these OTUs completely in file & recalculated relative abundance in "rarefied_10998_RDPtax_relative_noSpiro.txt"
-
-no_spiro_file <- "rarefied_10998_RDPtax_relative_noSpiro.txt"
-no_spiro_relative <- read.delim(no_spiro_file, skip = 1, header = T)  # update with name of your rarefied/merged taxa OTU table
-no_spiro_rownames_relative <- data.frame(no_spiro_relative[,-1], row.names=no_spiro_relative[,1])
-no_spiro_rownames_f_relative <- t(no_spiro_rownames_relative[, 1:(ncol(no_spiro_rownames_relative)-1)]) # remove taxonomy data (last column)
-
-# remove inoculum samples
-no_spiro_relative_no_inoc <- no_spiro_rownames_f_relative[-c(1, 8, 15), ]
+## Also test with taking out the Spirochetes from the average table since these were contaminants. 
 
 # Adonis
 C323.adonis_no_spiro <- adonis(no_spiro_rownames_f_relative[2:7, ] ~ treatment, method = "bray", permutations = perm_matrix)
