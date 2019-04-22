@@ -1,5 +1,7 @@
-# Code for creating Bray-Curtis NMDS plots and calculating community-wide changes
-# Sarah Loftus
+# Code for creating Bray-Curtis NMDS plots and calculating community-wide changes (OTU richness, ANOSIM) from bacteria community OTU data.
+# Author: Sarah Loftus, sarah.e.loftus@gmail.com
+
+# Input data and metadata are also available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v1
 
 # Load packages
 library(vegan)
@@ -52,7 +54,7 @@ color_all <- c("gray79", rep('gray63', 3), rep('gray43', 3),
                 "darkolivegreen1",rep('green3', 3), rep('green4', 3),
                 "lightblue3", rep('dodgerblue2', 3), rep('dodgerblue4', 3))
 
-# color <- c('gray63', "gray79", 'gray43', # Note: the order is different here to match the ggplot default of alphabetically ordering the IDs, so the Inoc and Fresh colors are switched
+color <- c('gray63', "gray79", 'gray43', # Note: the order is different here to match the ggplot default of alphabetically ordering the IDs, so the Inoc and Fresh colors are switched
            'green3', "darkolivegreen1", 'green4',
            'dodgerblue2', "lightblue3", 'dodgerblue4') 
 
@@ -66,7 +68,7 @@ color_no_inoc <- c('gray63', 'gray43',
 
 shape_all <- c(rep(16, 7), rep(17, 7), rep(15, 7))
 
-# shape <- c(rep(16, 3), rep(17, 3), rep(15, 3))
+shape <- c(rep(16, 3), rep(17, 3), rep(15, 3))
 
 shape_no_inoc <- c(rep(16, 2), rep(17, 2), rep(15, 2))
 
@@ -87,7 +89,7 @@ bray_MDS_noSpiro <- metaMDS(comm = as.matrix(no_spiro_rownames_f_relative), dist
 
 # NMDS plots
       
-# # ggplot - whole community
+# #ggplot (whole community, no ellipses)
 # ggplot_NMDS = data.frame(NMDS1 = bray_MDS$points[,1], NMDS2 = bray_MDS$points[,2])      
 # 
 # ggplot(data = ggplot_NMDS, aes(x = NMDS1, y = NMDS2, color = ID_all, shape = ID_all)) +
@@ -121,7 +123,7 @@ text(x= -1, y = 1, cex = 0.8, labels = paste("Stress =", format(bray_MDS$stress,
 dev.off()
 
 # points + ellipses - no Spirochaetes
-pdf("figures/FigSX_NMDS_noSpiro.pdf", width = 6, height = 4.5)
+pdf("figures/FigS6_NMDS_noSpiro.pdf", width = 6, height = 4.5)
 
 par(xpd = TRUE, mar = par()$mar + c(0,0,0,7)) # add room for legend
 ellipse_plot <- ordiplot(bray_MDS_noSpiro, type = "none", las = 1, tck = 0.025)  # save the plot data in a plot object
