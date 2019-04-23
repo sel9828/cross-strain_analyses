@@ -1,10 +1,9 @@
 # Project: Microalgae Cross-strain Growth Medium Reuse Experiment
 # Author: Sarah Loftus, sarah.e.loftus@gmail.com
 
-# This code organizes, analyses, and visualizes data from mircoalgae cross-strain recycled medium experiments. 
-# Results of analyses are published in Loftus & Johnson, 2019, "   ", Journal. 
+# This code organizes, analyses, and visualizes data from mircoalgae cross-strain reused medium experiments. 
 
-# Data is available at Figshare: DOI
+# Input data and metadata are also available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v1
 
 #######################################################################################
 
