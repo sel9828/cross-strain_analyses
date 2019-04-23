@@ -34,7 +34,7 @@ daily_df %>%
   select(Round, Day, Chl_medium, OD750_medium, DaysElapsed) -> daily_df2 
   # Note: warning messages do not pose problem to further analysis
 
-#### Define and calculate additional variables ####
+#### Define additional variables ####
 
 growth_df %>%    
   inner_join(daily_df2, by = c("Round", "Day") ) %>% # Add daily measurement data to growth data frame
@@ -42,31 +42,7 @@ growth_df %>%
          biomass_chl = Chl - Chl_medium              # biomass_chl = Blank-corrected chlorophyll-a concentration of the culture, in relative fluorescence units
   ) -> growth_df2    
 
-# # Check regression of OD vs algae cell concentrations to compare with other experiments
-# OD_vs_cell_Navicula <- lm(biomass_OD ~ AlgaeConc, data = growth_df2[growth_df2$Algae == "Navicula", ])  
-# # R^2 = 0.8081, biomass OD = 0.30008*AlgaeConc + 0.01173
-# 
-# OD_vs_cell_C323 <- lm(biomass_OD ~ AlgaeConc, data = growth_df2[growth_df2$Algae == 'C323', ])  
-# # R^2 = 0.5192, biomass OD = 0.03825*AlgaeConc + 0.01979
-# 
-# OD_vs_cell_D046 <- lm(biomass_OD ~ AlgaeConc, data = growth_df2[growth_df2$Algae == 'D046', ])  
-# # R^2 = 0.7837, biomass OD = 0.04281*AlgaeConc + 0.016368
-# 
-# # Plots
-# plot(biomass_OD ~ AlgaeConc, data = growth_df2[growth_df2$Algae == "Navicula", ], 
-#      xlab = "Algae Concentration (million cells/mL)", ylab = "OD 750", main = "Navicula sp.", ylim = c(0, 0.13), xlim = c(0,1))
-# abline(lm(growth_df2$biomass_OD[growth_df2$Algae == "Navicula"] ~ growth_df2$AlgaeConc[growth_df2$Algae == "Navicula"]))
-# 
-# plot(biomass_OD ~ AlgaeConc, data = growth_df2[growth_df2$Algae == "D046", ], 
-#      xlab = "Algae Concentration (million cells/mL)", ylab = "OD 750", main = "Chlorella sp. D046", xlim = c(0,8))
-# abline(lm(growth_df2$biomass_OD[growth_df2$Algae == "D046"] ~ growth_df2$AlgaeConc[growth_df2$Algae == "D046"]))
-# 
-# plot(biomass_OD ~ AlgaeConc, data = growth_df2[growth_df2$Algae == "C323", ], 
-#      xlab = "Algae Concentration (million cells/mL)", ylab = "OD 750", main = "Staurosira sp. C323", ylim = c(0, 0.2))
-# abline(lm(growth_df2$biomass_OD[growth_df2$Algae == "C323"] ~ growth_df2$AlgaeConc[growth_df2$Algae == "C323"]))
-
-
-# Calculate daily averages and standard deviations of all variables in growth data frame. For use in plotting. ###
+#### Calculate daily averages and standard deviations of all variables in growth data frame. For use in plotting. ####
 
 growth_df2 %>%
   select(-Replicate, -Chl, -OD750, -Chl_medium, -OD750_medium) %>% 
@@ -86,7 +62,7 @@ mu_period_25 <- 2:5   # Days 2-5; for: C323 Round 0 all treatments/replicates
 mu_period_35 <- 3:5   # Days 3-5; for: C323 Round 2 Recycled all replicates
 mu_period_38 <- 3:8   # Days 3-8; for: C323 Round 3 Recycled all replciates
 
-# Specific growth rate 
+# Calculate specific growth rate 
 growth_df2 %>%
   filter( (Algae == "Navicula" & Day %in% mu_period_02) |     # Based on the stated definitions above, select only the days used to calculate specific growth rate
           ( (Algae == "C323" & ( (Round == 1 & Treatment == "F" & Replicate == "C") | (Round == 3 & Treatment == "F") ) ) & Day %in% mu_period_03) |
@@ -102,43 +78,43 @@ growth_df2 %>%
   rename(mu = estimate) %>%                                  # rename the slope of the linear regression ("estimate") as mu, mu = the specific growth rate (units = 1/day)
   select(Algae, Round, Treatment, Replicate, mu) -> mu_data
 
+# Take averages and standard deviations of specific growth rate
 mu_data %>%
   group_by(Algae, Round, Treatment) %>% 
   select(-Replicate) %>% 
   summarize_all(funs(mean, sd), na.rm = TRUE) -> mu_avgs  
 
-# Maximum OD over the growth period for each replicate, then take avergae and st dev
-
+# Find the maximum OD over the growth period for each replicate
 growth_df2 %>% 
   select(Round, Day, Algae, Treatment, Replicate, biomass_OD) %>% 
   group_by(Round, Algae, Treatment, Replicate) %>% 
   summarize(max_OD = max(biomass_OD)) -> max_OD_data 
 
+# Take average and standard deviation of maximum OD
 max_OD_data %>% 
   group_by(Algae, Round, Treatment) %>% 
   select(-Replicate) %>% 
   summarize_all(funs(mean, sd), na.rm = TRUE) -> max_OD_avgs 
 
 # Change in DOC in Round 3
-
 growth_df2 %>% 
   filter(Round == 3) %>% 
   select(Day, Algae, Treatment, Replicate, DOC, biomass_OD) %>% 
   group_by(Algae, Treatment, Replicate) %>% 
   summarize(DOC_change = DOC[Day == 8] - DOC[Day == 0], # Change in DOC over the growth period
             DOC_per_OD = DOC_change/(biomass_OD[Day == 8] - biomass_OD[Day == 0])) -> DOC_change # Change in DOC per change in OD over the growth period
-  
+
+# Take average and standard deviation of net change in DOC in Round 3
 DOC_change %>%   
   select(-Replicate) %>% 
   summarize_all(funs(mean, sd), na.rm = TRUE) -> avg_DOC_change
 
 
-
 #### Statistics ####
 
-# Test for equal variances of specific growth rate (mu) and maximum OD, then perform t-tests
+# Test for equal variances of specific growth rate (mu) and maximum OD between Fresh and Reused treatments in Round 3 for each algae
 
-# mu - variance test
+# Variance test for mu
 C323_mu_var <- var.test(mu_data$mu[mu_data$Algae == 'C323' & mu_data$Round == 3 & mu_data$Treatment == "F"], 
                        mu_data$mu[mu_data$Algae == 'C323' & mu_data$Round == 3 & mu_data$Treatment == "R"],
                        alternative = "two.sided")
@@ -147,11 +123,27 @@ D046_mu_var <- var.test(mu_data$mu[mu_data$Algae == 'D046' & mu_data$Treatment =
                        mu_data$mu[mu_data$Algae == 'D046' & mu_data$Treatment == "R"],
                        alternative = "two.sided")
 
-Navi_mu_test <- var.test(mu_data$mu[mu_data$Algae == 'Navicula' & mu_data$Treatment == "F"], 
+Navi_mu_var <- var.test(mu_data$mu[mu_data$Algae == 'Navicula' & mu_data$Treatment == "F"], 
                        mu_data$mu[mu_data$Algae == 'Navicula' & mu_data$Treatment == "R"],
                        alternative = "two.sided")
 
-# mu - T test
+# Variance test for maximum OD
+C323_max_OD_var <- var.test(max_OD_data$max_OD[max_OD_data$Algae == 'C323' & max_OD_data$Round == 3 & max_OD_data$Treatment == "F"], 
+                            max_OD_data$max_OD[max_OD_data$Algae == 'C323' & max_OD_data$Round == 3 & max_OD_data$Treatment == "R"],
+                            alternative = "two.sided")
+
+D046_max_OD_var <- var.test(max_OD_data$max_OD[max_OD_data$Algae == 'D046' & max_OD_data$Treatment == "F"], 
+                            max_OD_data$max_OD[max_OD_data$Algae == 'D046' & max_OD_data$Treatment == "R"],
+                            alternative = "two.sided")
+
+Navi_max_OD_var <- var.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & max_OD_data$Treatment == "F"], 
+                            max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & max_OD_data$Treatment == "R"],
+                            alternative = "two.sided")
+
+# Perform T tests for mu and maximum OD between Fresh and Reused treatments in Round 3 for each algae
+# Based on results of variance test above, indicate in T test function where "var.equal" is TRUE or FALSE
+
+# T test for mu
 C323_mu_test <- t.test(mu_data$mu[mu_data$Algae == 'C323' & mu_data$Round == 3 & mu_data$Treatment == "F"], 
                        mu_data$mu[mu_data$Algae == 'C323' & mu_data$Round == 3 & mu_data$Treatment == "R"],
                        alternative = "two.sided", paired = FALSE, var.equal = TRUE)
@@ -164,20 +156,7 @@ Navi_mu_test <- t.test(mu_data$mu[mu_data$Algae == 'Navicula' & mu_data$Treatmen
                         mu_data$mu[mu_data$Algae == 'Navicula' & mu_data$Treatment == "R"],
                         alternative = "two.sided", paired = FALSE, var.equal = TRUE)
 
-# maximum OD - var test
-C323_max_OD_var <- var.test(max_OD_data$max_OD[max_OD_data$Algae == 'C323' & max_OD_data$Round == 3 & max_OD_data$Treatment == "F"], 
-                           max_OD_data$max_OD[max_OD_data$Algae == 'C323' & max_OD_data$Round == 3 & max_OD_data$Treatment == "R"],
-                           alternative = "two.sided")
-
-D046_max_OD_var <- var.test(max_OD_data$max_OD[max_OD_data$Algae == 'D046' & max_OD_data$Treatment == "F"], 
-                           max_OD_data$max_OD[max_OD_data$Algae == 'D046' & max_OD_data$Treatment == "R"],
-                           alternative = "two.sided")
-
-Navi_max_OD_var <- var.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & max_OD_data$Treatment == "F"], 
-                           max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & max_OD_data$Treatment == "R"],
-                           alternative = "two.sided")
-
-# maximum OD - T test
+# T test for maximum OD
 C323_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'C323' & max_OD_data$Round == 3 & max_OD_data$Treatment == "F"], 
                        max_OD_data$max_OD[max_OD_data$Algae == 'C323' & max_OD_data$Round == 3 & max_OD_data$Treatment == "R"],
                        alternative = "two.sided", paired = FALSE, var.equal = TRUE)
@@ -189,6 +168,7 @@ D046_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'D046' & max_
 Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & max_OD_data$Treatment == "F"], 
                        max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & max_OD_data$Treatment == "R"],
                        alternative = "two.sided", paired = FALSE, var.equal = TRUE)
+
 
 #### Figures ####
 
