@@ -172,7 +172,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
 
 #### Figures ####
 
-#### Figure 1: Daily OD ####
+# Figure 1: Daily OD ####
 
   # C323 Round 0-2 ####  
   C323_OD_plot_R02 <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "C323" & growth_df_avgs$Round != 3, ], 
@@ -205,7 +205,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(C323_OD_plot_R02)
   dev.off()
   
-  # D046 Round 3 ####    
+  # D046 phase 2 (Round 3) ####    
   D046_OD_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046", ], 
                          aes(x = Day, y = biomass_OD_mean, color = Treatment, shape = Treatment))  +
     geom_point(size = 2.5) +
@@ -230,7 +230,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.text.x = element_blank(),
            axis.text.y = element_text(size = 12))   
   
-  # Navicula Round 3 #### 
+  # Navicula phase 2 (Round 3) #### 
   Navicula_OD_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "Navicula", ], 
                              aes(x = Day, y = biomass_OD_mean, color = Treatment, shape = Treatment))  +
     geom_point(size = 2.5) +
@@ -246,7 +246,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            legend.title = element_blank(),
            legend.text = element_text(size = 9),
            legend.position = c(0.17,0.6),
-           axis.title.y = element_text(margin = margin(r = 15), size = 14),  # moves axis title away from axis label
+           axis.title.y = element_text(margin = margin(r = 15), size = 14),  
            axis.title.x = element_blank(),   
            panel.grid.major = element_line(colour = "gray87", size = 0.2),
            panel.border = element_rect(color = "gray60", fil = NA),            
@@ -255,7 +255,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.text.x = element_blank(),
            axis.text.y = element_text(size = 12)) 
   
-  # C323 Round 3 ####  
+  # C323 phase 2 (Round 3) ####  
   C323_OD_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "C323" & growth_df_avgs$Round == 3, ], 
                          aes(x = Day, y = biomass_OD_mean, color = Treatment, shape = Treatment))  +
     geom_point(size = 2.5) +
@@ -271,7 +271,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            legend.title = element_blank(),
            legend.text = element_text(size = 9),
            legend.position = c(0.17,0.6),
-           axis.title.y = element_blank(),  # moves axis title away from axis label
+           axis.title.y = element_blank(),  
            axis.title.x = element_text(margin = margin(r = 35), size = 14),   
            panel.background = element_rect(fill = "white"),
            panel.grid.major = element_line(colour = "gray87", size = 0.2),
@@ -298,11 +298,12 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(OD_gridplot)
   dev.off()
   
-#### Figure S1: Specific growth rate and maximum OD in phase 2 ####
+# Figure S1: Specific growth rate and maximum OD in phase 2 (Round 3) ####
   
   # reorder the x-axis to D046, Navi, C323
   mu_avgs$Algae <- factor(mu_avgs$Algae, levels = c("D046", "Navicula", "C323"))
   max_OD_avgs$Algae <- factor(max_OD_avgs$Algae, levels = c("D046", "Navicula", "C323"))
+  
   
   specific_growth_plot <- ggplot(data = mu_avgs[mu_avgs$Round == 3, ], 
                          aes(x = Algae, y = mean, fill = Treatment))  +
@@ -360,8 +361,9 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(mu_maxOD_grid)
   dev.off()
   
-#### Nutrients versus Time ####    
-#### PO4
+# Nutrients versus Time (not published) ####    
+  
+  # PO4
   # D046 Round 3 ####    
   D046_PO4_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$PO4_mean)), ], 
                          aes(x = Day, y = PO4_mean, color = Treatment, shape = Treatment))  +
@@ -452,7 +454,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.text.x = element_blank(),
            axis.text.y = element_text(size = 11)) 
 
-# NH4
+  # NH4
   # D046 Round 3 ####    
   D046_NH4_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$NH4_mean)), ], 
                           aes(x = Day, y = NH4_mean, color = Treatment, shape = Treatment))  +
@@ -514,7 +516,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.text.x = element_blank(),
            axis.text.y = element_text(size = 11)) 
  
-# Silicate
+  # Silicate
   # D046 Round 3 ####    
   D046_Si_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$Si_mean)), ], 
                           aes(x = Day, y = Si_mean, color = Treatment, shape = Treatment))  +
@@ -605,15 +607,17 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(nutrients_plot)
   
   # Save plot as pdf file
-  pdf("Figures/Nutrients.pdf", 
+  pdf("Figures/Nutrients_vs_time.pdf", 
       width = 7, height = 5)
   grid.draw(nutrients_plot)
   dev.off()
   
-#### intial nutrients ####
+#### Figure S2: Intial nutrient concentrations in phase 2 (Round 3) ####
   
+  # re-order algae names
   growth_df_avgs$Algae <- factor(growth_df_avgs$Algae, levels = c("D046", "Navicula", "C323"))
 
+  # NH4
   initial_NH4_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Round == 3 & growth_df_avgs$Day == 0, ], 
                                  aes(x = Algae, y = NH4_mean, fill = Treatment))  +
     geom_col(position = position_dodge(0.9), color = "gray15") +
@@ -640,6 +644,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.title.x = element_blank(),
            axis.text.x = element_blank()) 
   
+  # PO4
   initial_PO4_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Round == 3 & growth_df_avgs$Day == 0, ], 
                         aes(x = Algae, y = PO4_mean, fill = Treatment))  +
     geom_col(position = position_dodge(0.9), color = "gray15") +
@@ -658,6 +663,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.title.x = element_blank(),
            axis.text.x = element_blank()) 
   
+  #Silicate
   initial_Si_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Round == 3 & growth_df_avgs$Day == 0, ], 
                              aes(x = Algae, y = Si_mean, fill = Treatment))  +
     geom_col(position = position_dodge(0.9), color = "gray15") +
@@ -690,7 +696,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   dev.off()
 
   
-  #### DOC ####
+# DOC ####
   
   D046_DOC_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$DOC_mean)), ], 
                          aes(x = Day, y = DOC_mean, color = Treatment, shape = Treatment))  +
@@ -800,7 +806,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(DOC_gridplot)
   dev.off()
   
-#### Fv/Fm  ####
+# Fv/Fm  ####
   
   D046_FvFm_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$FvFm_mean)), ], 
                           aes(x = Day, y = FvFm_mean, color = Treatment, shape = Treatment))  +
@@ -891,7 +897,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            axis.text.x = element_text(size = 12),
            axis.text.y = element_blank())
   
-  # Combine Round 3 Daily plots in a grid & Save as pdf ####
+  # Combine plots in a grid & Save as pdf ####
   
   # Convert ggplots to grobs
   D046_FvFm_grob <- ggplotGrob(D046_FvFm_plot)
@@ -909,6 +915,5 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
       width = 7.5, height = 3)
   grid.draw(FvFm_gridplot)
   dev.off()
-  
-#### mu #### with algae on x-axis and r and f as colors of the bars
+
   
