@@ -1,5 +1,7 @@
-# Code for creating Bray-Curtis NMDS plots and calculating community-wide changes (OTU richness, ANOSIM) from bacteria community OTU data.
+# Project: Microalgae Cross-strain Growth Medium Reuse Experiment
 # Author: Sarah Loftus, sarah.e.loftus@gmail.com
+
+# Code for creating Bray-Curtis NMDS plots and calculating community-wide changes (OTU richness, ANOSIM) from bacteria community OTU data.
 
 # Input data and metadata are also available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v1
 
