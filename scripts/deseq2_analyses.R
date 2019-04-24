@@ -4,6 +4,8 @@
 # This code carries out differential abundance analyses on bacteria OTU datasets.
 # Notes on Deseq2: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
+# Input data and metadata are available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v1
+
 # Load packages
 library(DESeq2) # version 1.14.1
 library(tidyverse)
@@ -14,26 +16,25 @@ library(gplots)
 # 2. coldata = Table of column data; first column row names must match columns names of cts; additional columns describe the sample (e.g., treatment, replicate)
 # 3. design = a column of coldata that is being used to compare the samples (e.g., treatment)
 
-# Counts matrix including Spirochete OTUs
-otu_file <- "input_data/Data3_Absolute_OTUs.txt"  # OTU table (absolute counts) txt file
-
-otutable <- read.delim(otu_file, skip = 1, header = T, row.names = 1)  # OTU table
+# Counts matrix (including Spirochaete OTUs)
+otutable <- read.delim("input_data/Data3_Absolute_OTUs.txt", skip = 1, header = T, row.names = 1)  # OTU table
 
 otutable_no_inoc <- otutable[ , -c(1, 8, 15)] # remove inoculum samples, since only comparing treatment and control on final day
 
 cts <- round(otutable_no_inoc[ , !(colnames(otutable_no_inoc) %in% c("taxonomy"))]) # remove taxonomy column, leaving only sample names as columns; round numbers to whole integers
 
-# Split cts matrix by algae & remove OTUs that have 0 counts in all samples
-cts_C323 <- cts[,1:6]
-cts_D046 <- cts[,7:12]
-cts_Navi <- cts[,13:18]
+# Split cts matrix by algae 
+cts_C323 <- cts[,1:6]   # Staurosira sp. C323
+cts_D046 <- cts[,7:12]  # Chlorella sp. D046
+cts_Navi <- cts[,13:18] # Navicula sp. SFP
 
+# Remove OTUs that have 0 counts in all samples
 cts_C323 <- cts_C323[rowSums(cts_C323)!=0, ]
 cts_D046 <- cts_D046[rowSums(cts_D046)!=0, ]
 cts_Navi <- cts_Navi[rowSums(cts_Navi)!=0, ]
 
 # Column data 
-reps <- c("A", "B", "C", "D", "E", "F")
+reps <- c("A", "B", "C", "D", "E", "F") # biological replicates
 treatment <- c(rep("Fresh", 3), rep("Recycled", 3))
 
 coldata_C323 <- data.frame(reps, treatment)
