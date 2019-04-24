@@ -63,38 +63,41 @@ dds_C323$treatment <- relevel(dds_C323$treatment, ref = "Fresh")
 dds_D046$treatment <- relevel(dds_D046$treatment, ref = "Fresh")
 dds_Navi$treatment <- relevel(dds_Navi$treatment, ref = "Fresh")
 
-# Differential analysis. MAP refers to methods that uses LC shrinkage, and calculates a p-value for the shrunken LFC.
-  # USe MLE for p-values/adjp and log fold change (shrinkage MAP may not be relevant to this type of data)
+# Differential analysis. 
+  # MAP refers to methods that uses LC shrinkage, and calculates a p-value for the shrunken LFC.
    # MAP does Log Fold Change shrinkage (*note: Need DESeq2 version 1.16 for lfcShrink function, requires R version 3.4)
       # From the beginner's guide: "When count values are too low to allow an accurate estimate of the LFC, 
       # the value is “shrunken” towards zero to avoid that these values, which otherwise would frequently be 
       # unrealistically large, dominate the top-ranked log fold changes."
 
+  # Decided to use MLE for p-values/adjp and log fold change (since shrinkage MAP may not be relevant to this type of data)
+
+# MLE
 DESeq_C323_MLE <- DESeq(dds_C323, modelMatrixType="standard", betaPrior=FALSE)
-DESeq_C323_MAP <- DESeq(dds_C323, modelMatrixType="standard", betaPrior=TRUE)
-
 DESeq_D046_MLE <- DESeq(dds_D046, modelMatrixType="standard", betaPrior=FALSE)
-DESeq_D046_MAP <- DESeq(dds_D046, modelMatrixType="standard", betaPrior=TRUE)
-
 DESeq_Navi_MLE <- DESeq(dds_Navi, modelMatrixType="standard", betaPrior=FALSE)
-DESeq_Navi_MAP <- DESeq(dds_Navi, modelMatrixType="standard", betaPrior=TRUE)
+
+# MAP
+# DESeq_C323_MAP <- DESeq(dds_C323, modelMatrixType="standard", betaPrior=TRUE)
+# DESeq_D046_MAP <- DESeq(dds_D046, modelMatrixType="standard", betaPrior=TRUE)
+# DESeq_Navi_MAP <- DESeq(dds_Navi, modelMatrixType="standard", betaPrior=TRUE)
 
 # Differential analysis results
   # Change the alpha value (false discovery rate cutoff for p-adjusted) for independent filtering step 
-  # to 0.05 since this is what I'll be using for determining significance
+    # to 0.05 since this is what I'll be using for determining significance
+  # padj = adjusted p value, is the fraction of false positives if one called significant the value of this OTU's p-value or lower
 
 a <- 0.05
 
+# MLE results 
 res_C323_MLE <- results(DESeq_C323_MLE, name="treatment_Recycled_vs_Fresh", alpha = a)
-res_C323_MAP <- results(DESeq_C323_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
-
 res_D046_MLE <- results(DESeq_D046_MLE, name="treatment_Recycled_vs_Fresh", alpha = a)
-res_D046_MAP <- results(DESeq_D046_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
-
 res_Navi_MLE <- results(DESeq_Navi_MLE, name="treatment_Recycled_vs_Fresh", alpha = a)
-res_Navi_MAP <- results(DESeq_Navi_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
 
-    # padj = adjusted p value, is the fraction of false positives if one called significant the value of this OTUs p-value or lower
+# MAP results 
+# res_C323_MAP <- results(DESeq_C323_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
+# res_D046_MAP <- results(DESeq_D046_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
+# res_Navi_MAP <- results(DESeq_Navi_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
 
 # Summaries of adjp < a
 summary(res_C323_MLE)
@@ -102,14 +105,16 @@ summary(res_D046_MLE)
 summary(res_Navi_MLE)
 
 # Export results - ### *** UPdate to save into DESeq2_results" folder within R project
-write.csv(as.data.frame(res_C323_MLE), file="C323_DESeq2_results.csv")
-write.csv(as.data.frame(res_D046_MLE), file="D046_DESeq2_results.csv")
-write.csv(as.data.frame(res_Navi_MLE), file="Navi_DESeq2_results.csv")
+write.csv(as.data.frame(res_C323_MLE), file="DESeq2_results/C323_DESeq2_results.csv")
+write.csv(as.data.frame(res_D046_MLE), file="DESeq2_results/D046_DESeq2_results.csv")
+write.csv(as.data.frame(res_Navi_MLE), file="DESeq2_results/Navi_DESeq2_results.csv")
 
-# Create tables of sig results with taxonomy added
+# Create tables of sig results 
 res_C323_sig <- as.data.frame(subset(res_C323_MLE, padj < a))
 res_D046_sig <- subset(res_D046_MLE, padj < a)
 res_Navi_sig <- subset(res_Navi_MLE, padj < a)
+
+
 
 
 # Merge the log2FoldChange results from the three algae to make a heatmap
