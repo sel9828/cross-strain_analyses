@@ -705,9 +705,9 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
     geom_errorbar(aes(ymin=DOC_mean - DOC_sd, ymax=DOC_mean + DOC_sd), width= 0.2) +
     scale_color_manual(labels = c("Fresh", "Reused"), values = c('green3', 'green4'), guide = guide_legend(reverse=TRUE)) +
     scale_shape_manual(labels = c("Fresh", "Reused"), values = c(16, 15), guide = guide_legend(reverse=TRUE)) +
-    scale_y_continuous(breaks = seq(0, 500, 50), expand = expand_scale(mult = c(0.05,0.1))) +  
+    scale_y_continuous(limits = c(0, 270), breaks = seq(0, 250, 50), expand = expand_scale(mult = c(0.05,0.02))) +  
     scale_x_continuous(limits = c(-0.1,8.1), breaks = seq(0, 8, 2)) +
-    annotate("text", x = 0.2, y = 220, label = expression(paste(bold("A"))), size = 4) + 
+    annotate("text", x = 0.2, y = 260, label = expression(paste(bold("A"))), size = 4) + 
     labs( y = "Biologically-derived DOC (µM)", x = "Days", title = expression(paste(italic("  Chlorella"), " sp. D046"))) +
     theme( legend.key = element_rect(fill = NA),  # removes color from behind legned points/lines
            legend.title = element_blank(),
@@ -734,7 +734,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
     geom_errorbar(aes(ymin=DOC_mean - DOC_sd, ymax=DOC_mean + DOC_sd), width= 0.2) +
     scale_color_manual(labels = c("Fresh", "Reused"), values = c('dodgerblue2', 'dodgerblue4'), guide = guide_legend(reverse=TRUE)) +
     scale_shape_manual(labels = c("Fresh", "Reused"), values = c(16, 15), guide = guide_legend(reverse=TRUE)) +
-    scale_y_continuous(breaks = seq(0, 500, 50), expand = expand_scale(mult = c(0.05,0.1))) +  
+    scale_y_continuous(limits = c(0, 270), breaks = seq(0, 250, 50), expand = expand_scale(mult = c(0.05,0.02))) +  
     scale_x_continuous(limits = c(-0.1,8.1), breaks = seq(0, 8, 2)) +
     annotate("text", x = 0.2, y = 260, label = expression(paste(bold("B"))), size = 4) + 
     labs(x = "Days", title = expression(paste(italic("  Navicula"), " sp. SFP"))) +
@@ -755,7 +755,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            panel.background = element_rect(fill = "white"),
            axis.ticks = element_blank(),
            axis.text.x = element_text(size = 12),
-           axis.text.y = element_text(size = 12))
+           axis.text.y = element_blank())
   
   C323_DOC_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "C323" & !(is.na(growth_df_avgs$DOC_mean)) & growth_df_avgs$Round == 3, ], 
                          aes(x = Day, y = DOC_mean, color = Treatment, shape = Treatment))  +
@@ -764,9 +764,9 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
     geom_errorbar(aes(ymin=DOC_mean - DOC_sd, ymax=DOC_mean + DOC_sd), width= 0.2) +
     scale_color_manual(labels = c("Fresh", "Reused"), values = c('gray63','gray43'), guide = guide_legend(reverse=TRUE)) +
     scale_shape_manual(labels = c("Fresh", "Reused"), values = c(16, 15), guide = guide_legend(reverse=TRUE)) +
-    scale_y_continuous(breaks = seq(0, 500, 50), expand = expand_scale(mult = c(0.05,0.1))) +  
+    scale_y_continuous(limits = c(0, 270), breaks = seq(0, 250, 50), expand = expand_scale(mult = c(0.05,0.02))) +  
     scale_x_continuous(limits = c(-0.1,8.1), breaks = seq(0, 8, 2)) +
-    annotate("text", x = 0.2, y = 175, label = expression(paste(bold("C"))), size = 4) + 
+    annotate("text", x = 0.2, y = 260, label = expression(paste(bold("C"))), size = 4) + 
     labs(x = "Days", title = expression(paste(italic("Staurosira"), " sp. C323"))) +
     theme( legend.key = element_rect(fill = NA),  
            legend.title = element_blank(),
@@ -785,7 +785,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
            panel.background = element_rect(fill = "white"),
            axis.ticks = element_blank(),
            axis.text.x = element_text(size = 12),
-           axis.text.y = element_text(size = 12))
+           axis.text.y = element_blank())
   
   # Combine Round 3 Daily OD plots in a grid & Save as pdf ####
   
@@ -801,7 +801,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(DOC_gridplot)
   
   # Save plot as pdf file
-  pdf("Figures/FigS4_DOCvsTime.pdf", 
+  pdf("Figures/Fig3_DOCvsTime.pdf", 
       width = 7.5, height = 3)
   grid.draw(DOC_gridplot)
   dev.off()
