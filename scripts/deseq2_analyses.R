@@ -4,7 +4,7 @@
 # This code carries out differential abundance analyses on bacteria OTU datasets.
 # Notes on Deseq2: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
-# Input data and metadata are available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v1
+# Input data and metadata are available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v2
 
 # Load packages
 library(DESeq2) # version 1.14.1
@@ -35,7 +35,7 @@ cts_Navi <- cts_Navi[rowSums(cts_Navi)!=0, ]
 
 # Column data 
 reps <- c("A", "B", "C", "D", "E", "F") # biological replicates
-treatment <- c(rep("Fresh", 3), rep("Recycled", 3))
+treatment <- c(rep("Fresh", 3), rep("Reused", 3))
 
 coldata_C323 <- data.frame(reps, treatment)
 coldata_D046 <- data.frame(reps, treatment)
@@ -90,9 +90,9 @@ DESeq_Navi_MLE <- DESeq(dds_Navi, modelMatrixType="standard", betaPrior=FALSE)
 a <- 0.05
 
 # MLE results 
-res_C323_MLE <- results(DESeq_C323_MLE, name="treatment_Recycled_vs_Fresh", alpha = a)
-res_D046_MLE <- results(DESeq_D046_MLE, name="treatment_Recycled_vs_Fresh", alpha = a)
-res_Navi_MLE <- results(DESeq_Navi_MLE, name="treatment_Recycled_vs_Fresh", alpha = a)
+res_C323_MLE <- results(DESeq_C323_MLE, name="treatment_Reused_vs_Fresh", alpha = a)
+res_D046_MLE <- results(DESeq_D046_MLE, name="treatment_Reused_vs_Fresh", alpha = a)
+res_Navi_MLE <- results(DESeq_Navi_MLE, name="treatment_Reused_vs_Fresh", alpha = a)
 
 # MAP results 
 # res_C323_MAP <- results(DESeq_C323_MAP, name="treatment_Recycled_vs_Fresh", alpha = a)
@@ -115,41 +115,41 @@ res_D046_sig <- subset(res_D046_MLE, padj < a)
 res_Navi_sig <- subset(res_Navi_MLE, padj < a)
 
 
-# # Merge the log2FoldChange results from the three algae to make a heatmap (not published)
-# res_C323_log2 <- as.data.frame(res_C323_MLE)
-# res_C323_log2$OTU <- rownames(res_C323_log2)
-# res_C323_log2 %>% 
-#   select(OTU, C323_log2 = log2FoldChange) -> C323_log2
-# 
-# res_D046_log2 <- as.data.frame(res_D046_MLE)
-# res_D046_log2$OTU <- rownames(res_D046_log2)
-# res_D046_log2 %>% 
-#   select(OTU, D046_log2 = log2FoldChange) -> D046_log2
-# 
-# res_Navi_log2 <- as.data.frame(res_Navi_MLE)
-# res_Navi_log2$OTU <- rownames(res_Navi_log2)
-# res_Navi_log2 %>% 
-#   select(OTU, Navi_log2 = log2FoldChange) -> Navi_log2
-#   
-# D046_log2 %>% 
-#   full_join(Navi_log2, by = "OTU") %>% 
-#   full_join(C323_log2, by = "OTU") -> all_algae_log2
-# 
-# rownames(all_algae_log2) <- all_algae_log2$OTU
-# 
-# library(RColorBrewer)
-# my_palette <- colorRampPalette(rev(brewer.pal(11,"Spectral")))(100)
-# 
-# png("figures/deseq2_log2_heatmap.png",
-#     width = 7*300,        
-#     height = 6.5*300,
-#     res = 300,            # 300 pixels per inch
-#     pointsize = 8)
-# heatmap.2(as.matrix(all_algae_log2[  ,2:4]), 
-#           density.info = "none", trace = "none", dendrogram = "none",
-#           na.color = "white", Colv = FALSE, Rowv = FALSE, col = my_palette,
-#           key = T, labCol = NA, key.xlab = "Log2 Fold Change", key.title = "", keysize = 1)
-# dev.off()
+# Merge the log2FoldChange results from the three algae to make a heatmap (not published)
+res_C323_log2 <- as.data.frame(res_C323_MLE)
+res_C323_log2$OTU <- rownames(res_C323_log2)
+res_C323_log2 %>%
+  select(OTU, C323_log2 = log2FoldChange) -> C323_log2
+
+res_D046_log2 <- as.data.frame(res_D046_MLE)
+res_D046_log2$OTU <- rownames(res_D046_log2)
+res_D046_log2 %>%
+  select(OTU, D046_log2 = log2FoldChange) -> D046_log2
+
+res_Navi_log2 <- as.data.frame(res_Navi_MLE)
+res_Navi_log2$OTU <- rownames(res_Navi_log2)
+res_Navi_log2 %>%
+  select(OTU, Navi_log2 = log2FoldChange) -> Navi_log2
+
+D046_log2 %>%
+  full_join(Navi_log2, by = "OTU") %>%
+  full_join(C323_log2, by = "OTU") -> all_algae_log2
+
+rownames(all_algae_log2) <- all_algae_log2$OTU
+
+library(RColorBrewer)
+my_palette <- colorRampPalette(rev(brewer.pal(11,"Spectral")))(100)
+
+png("figures/deseq2_log2_heatmap.png",
+    width = 7*300,
+    height = 6.5*300,
+    res = 300,            # 300 pixels per inch
+    pointsize = 8)
+heatmap.2(as.matrix(all_algae_log2[  ,2:4]),
+          density.info = "none", trace = "none", dendrogram = "none",
+          na.color = "white", Colv = FALSE, Rowv = FALSE, col = my_palette,
+          key = T, labCol = NA, key.xlab = "Log2 Fold Change", key.title = "", keysize = 1)
+dev.off()
 
 
 

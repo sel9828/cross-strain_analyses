@@ -3,7 +3,7 @@
 
 # This code organizes, analyses, and visualizes data from mircoalgae cross-strain reused medium experiments. 
 
-# Input data and metadata are also available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v1
+# Input data and metadata are also available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v2
 
 #######################################################################################
 

@@ -4,6 +4,8 @@
 # This code carries out differential abundance analyses on bacteria community function pathways dataset generated from picrust2.
 # Notes on Deseq2: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
+# Input data and metadata are available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v2
+
 # Load packages
 library(DESeq2) # version 1.14.1
 library(tidyverse)
@@ -15,6 +17,7 @@ library(gplots)
 # 3. design = a column of coldata that is being used to compare the samples (e.g., treatment)
 
 # Counts matrix (including Spirochaete OTUs)
+#"input_data/
 cts_table_pi2 <- read.delim("/Users/sarahloftus/Documents/PICRUSt/2019_cross-strain_experiment/cross_strain_all/picrust2_out_pipeline/pathways_out/path_abun_unstrat.tsv", 
              header = T, row.names = 1)  # Pathways table
 
