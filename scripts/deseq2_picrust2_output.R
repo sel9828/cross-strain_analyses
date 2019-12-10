@@ -17,8 +17,8 @@ library(gplots)
 # 3. design = a column of coldata that is being used to compare the samples (e.g., treatment)
 
 # Counts matrix (including Spirochaete OTUs)
-#"input_data/
-cts_table_pi2 <- read.delim("/Users/sarahloftus/Documents/PICRUSt/2019_cross-strain_experiment/cross_strain_all/picrust2_out_pipeline/pathways_out/path_abun_unstrat.tsv", 
+
+cts_table_pi2 <- read.delim("input_data/Data6_Pathways.tsv", 
              header = T, row.names = 1)  # Pathways table
 
 cts_pi2 <- round(cts_table_pi2[ , -c(1, 8, 15)]) # remove inoculum samples, since only comparing treatment and control on final day. Round to nearest integer
@@ -80,7 +80,7 @@ summary(res_Navi_MLE_pi2)
 
 # Tables of sig results 
 # Add pathway descriptions to significant results table & just keep log2foldChange and p-adj values
-pathway_descrip <- read.csv("/Users/sarahloftus/Box Sync/Home Folder sel28/Sync/Johnson_Lab/Experiments_and_Data/Medium_Recycling/2018 Cross-strain Medium Reuse Experiment/Data_Analyses/picrust2_output_analyses/pathway_descriptions.csv")
+pathway_descrip <- read.csv("input_data/pathway_descriptions.csv")
 
 as.data.frame(res_C323_MLE_pi2) %>% 
   rownames_to_column("pathway") %>% 
