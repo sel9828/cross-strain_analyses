@@ -101,7 +101,7 @@ as.data.frame(res_Navi_MLE_pi2) %>%
   inner_join(pathway_descrip, by = "pathway") -> res_Navi_sig_pi2
 
 # Export significant results 
-write.csv(res_C323_sig_pi2, file="DESeq2_results/C323_DESeq2_results.csv")
-write.csv(res_D046_sig_pi2, file="DESeq2_results/D046_DESeq2_results.csv")
-write.csv(res_Navi_sig_pi2, file="DESeq2_results/Navi_DESeq2_results.csv")
+write.csv(res_C323_sig_pi2, file="DESeq2_results/C323_DESeq2_picrust2_results.csv")
+write.csv(res_D046_sig_pi2, file="DESeq2_results/D046_DESeq2_picrust2_results.csv")
+write.csv(res_Navi_sig_pi2, file="DESeq2_results/Navi_DESeq2_picrust2_results.csv")
 
