@@ -1,7 +1,7 @@
 # Project: Microalgae Cross-strain Growth Medium Reuse Experiment
 # Author: Sarah Loftus, sarah.e.loftus@gmail.com
 
-# This code carries out differential abundance analyses on bacteria community function pathways dataset generated from picrust2.
+# This code carries out differential abundance analyses on bacteria community functional pathways data generated from picrust2.
 # Notes on Deseq2: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
 # Input data and metadata are available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v2
@@ -37,23 +37,25 @@ cts_Navi_pi2 <- cts_Navi_pi2[rowSums(cts_Navi_pi2)!=0, ]
 reps <- c("A", "B", "C", "D", "E", "F") # biological replicates
 treatment <- c(rep("Fresh", 3), rep("Reused", 3))
 
-coldata <- data.frame(reps, treatment)
+coldata_C323 <- data.frame(reps, treatment)
+coldata_D046 <- data.frame(reps, treatment)
+coldata_Navi <- data.frame(reps, treatment)
 
-rownames(coldata) <- colnames(cts_C323_pi2)
-rownames(coldata) <- colnames(cts_D046_pi2)
-rownames(coldata) <- colnames(cts_Navi_pi2)
+rownames(coldata_C323) <- colnames(cts_C323_pi2)
+rownames(coldata_D046) <- colnames(cts_D046_pi2)
+rownames(coldata_Navi) <- colnames(cts_Navi_pi2)
 
 # DESeq dataset
 dds_C323_pi2 <- DESeqDataSetFromMatrix(countData = cts_C323_pi2, 
-                                   colData = coldata,
+                                   colData = coldata_C323,
                                    design = ~ treatment)
 
 dds_D046_pi2 <- DESeqDataSetFromMatrix(countData = cts_D046_pi2, 
-                                   colData = coldata,
+                                   colData = coldata_D046,
                                    design = ~ treatment)
 
 dds_Navi_pi2 <- DESeqDataSetFromMatrix(countData = cts_Navi_pi2, 
-                                   colData = coldata,
+                                   colData = coldata_Navi,
                                    design = ~ treatment)
 
 # Specify the control treatment
@@ -104,4 +106,25 @@ as.data.frame(res_Navi_MLE_pi2) %>%
 write.csv(res_C323_sig_pi2, file="DESeq2_results/C323_DESeq2_picrust2_results.csv")
 write.csv(res_D046_sig_pi2, file="DESeq2_results/D046_DESeq2_picrust2_results.csv")
 write.csv(res_Navi_sig_pi2, file="DESeq2_results/Navi_DESeq2_picrust2_results.csv")
+
+# Combine significant results among algae strains into one table
+
+res_C323_sig_pi2 %>% 
+  full_join(res_D046_sig_pi2, by = c("pathway", "description"), suffix = c("_C323", "_D046")) %>% 
+  full_join(res_Navi_sig_pi2, by = c("pathway", "description")) %>% 
+  rename(padj_Navi = padj, log2FoldChange_Navi = log2FoldChange) -> all_res_sig_pi2
+
+# Significant pathways unique to each alga
+
+all_res_sig_pi2 %>% 
+  filter(is.na(padj_D046)) %>% 
+  filter(is.na(padj_Navi)) -> C323_unique_sig_pi2
+
+all_res_sig_pi2 %>% 
+  filter(is.na(padj_C323)) %>% 
+  filter(is.na(padj_Navi)) -> D046_unique_sig_pi2
+
+all_res_sig_pi2 %>% 
+  filter(is.na(padj_C323)) %>% 
+  filter(is.na(padj_D046)) -> Navi_unique_sig_pi2
 
