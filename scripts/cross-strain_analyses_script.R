@@ -313,6 +313,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
     scale_fill_manual(labels = c("Fresh", "Reused"), values = c('gray53','gray33')) +
     scale_x_discrete(labels=c("D046" = expression(paste(italic("Chlorella"), " sp.")), "Navicula" = expression(paste(italic("Navicula"), " sp.")), "C323" = expression(paste(italic("Staurosira"), " sp.")))) +
     annotate("text", x = 0.6, y = 1.2, label = expression(paste(bold("A"))), size = 5) + 
+    annotate("text", x = 3, y = 0.9, label = "*", size = 8) +
     scale_y_continuous(expand = expand_scale(mult = c(0, 0.05)), breaks = seq(0,1.2, by = 0.2)) +
     theme( legend.key = element_rect(fill = NA),  
            legend.title = element_blank(),
@@ -339,6 +340,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
     scale_fill_manual(labels = c("Fresh", "Reused"), values = c('gray53','gray33')) +
     scale_x_discrete(labels=c("D046" = expression(paste(italic("Chlorella"), " sp.")), "Navicula" = expression(paste(italic("Navicula"), " sp.")), "C323" = expression(paste(italic("Staurosira"), " sp.")))) +
     annotate("text", x = 0.6, y = 0.22, label = expression(paste(bold("B"))), size = 5) + 
+    annotate("text", x = 3, y = 0.1, label = "*", size = 8) +
     scale_y_continuous(expand = expand_scale(mult = c(0.02, 0.05)), breaks = seq(0,0.2, by = 0.05)) +
     theme( legend.position = "none",                              
            panel.background = element_rect(fill = NA),
@@ -696,7 +698,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   dev.off()
 
   
-# DOC ####
+# Figure 3: DOC ####
   
   D046_DOC_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$DOC_mean)), ], 
                          aes(x = Day, y = DOC_mean, color = Treatment, shape = Treatment))  +
