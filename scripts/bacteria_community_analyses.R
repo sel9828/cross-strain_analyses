@@ -182,7 +182,7 @@ treatment <- as.factor(c(rep("Fresh", 3), rep("Reused", 3)))
   # Use the combn function to get the combinations, but append the final 10 columns to the first ten so that it is a combination of 6 instead of 3 (2 groups of 3)
 
 combos <- combn(6,3)
-perm_matrix <- t(rbind(combos[, 1:10], combos[, 20:11]))[2:10, ] # append the combos matrix & transpose so each row is a combination of 1-6; remove the first row because this is the given data set
+perm_matrix <- t(rbind(combos[, 1:10], combos[, 11:20]))[2:10, ] # append the combos matrix & transpose so each row is a combination of 1-6; remove the first row because this is the given data set
 
 # Anosim
 C323.anosim <- anosim(otutable_rownames_f_relative[2:7, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
@@ -200,11 +200,16 @@ D046.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[9:14, ], grouping = 
 
 Navi.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[16:21, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
-# Compare bacteria communities among the three algae (combine fresh and reused within each algae)
-# Create data frame for algae
-algae <- as.factor(c(rep("C323", 6), rep("D046", 6)))
 
+## Also compare bacteria communities among the three algae (combine inoculum and fresh and reused samples within each algae)
 
+# Create data frame for algae groups
+algae <- as.factor(c(rep("C323", 7), rep("D046", 7), rep("Navi", 7)))
+
+# Anosim (use permutations as number this time instead of creating custom permuation matrix, since many more combinations possible now)
+
+algae.anosim <- anosim(otutable_rownames_f_relative, grouping = algae, distance = "bray", permutations = 999)
+  
 
 ### Community composition plot at family level ###
 
