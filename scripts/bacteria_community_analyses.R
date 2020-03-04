@@ -68,11 +68,11 @@ color_no_inoc <- c('gray63', 'gray43',
                    'green3', 'green4', 
                    'dodgerblue2', 'dodgerblue4')
 
-shape_all <- c(rep(16, 7), rep(17, 7), rep(15, 7))
+shape_all <- c(rep(19, 7), rep(17, 7), rep(15, 7))
 
-shape <- c(rep(16, 3), rep(17, 3), rep(15, 3))
+shape <- c(rep(19, 3), rep(17, 3), rep(15, 3))
 
-shape_no_inoc <- c(rep(16, 2), rep(17, 2), rep(15, 2))
+shape_no_inoc <- c(rep(19, 2), rep(17, 2), rep(15, 2))
 
 
 # Legend text to use for plots
@@ -111,11 +111,11 @@ bray_MDS_noSpiro <- metaMDS(comm = as.matrix(no_spiro_rownames_f_relative), dist
 #          axis.text = element_text(size = 12))
 
 # points + ellipses - whole community
-pdf("figures/Fig4_NMDS.pdf", width = 6, height = 4.5)
+pdf("figures/Fig5_NMDS.pdf", width = 6, height = 4.5)
 
 par(xpd = TRUE, mar = par()$mar + c(0,0,0,7)) # add room for legend
 ellipse_plot <- ordiplot(bray_MDS, type = "none", las = 1, tck = 0.025)  # save the plot data in a plot object
-points(ellipse_plot, "sites", pch= shape_all, col= color_all, cex = 1.1)  # add points, color & shape vectors that have a specific shape/color for each individual point
+points(ellipse_plot, "sites", pch= shape_all, col= color_all, cex = 1.3)  # add points, color & shape vectors that have a specific shape/color for each individual point
 # add ellipses
 ordiellipse(bray_MDS, groups = ID_all, display = "sites", draw = "lines",
             col = color, kind = "sd", conf = 0.95, lwd = 1.75)
@@ -125,11 +125,11 @@ text(x= -1, y = 1, cex = 0.8, labels = paste("Stress =", format(bray_MDS$stress,
 dev.off()
 
 # points + ellipses - no Spirochaetes
-pdf("figures/FigS6_NMDS_noSpiro.pdf", width = 6, height = 4.5)
+pdf("figures/FigS5_NMDS_noSpiro.pdf", width = 6, height = 4.5)
 
 par(xpd = TRUE, mar = par()$mar + c(0,0,0,7)) # add room for legend
 ellipse_plot <- ordiplot(bray_MDS_noSpiro, type = "none", las = 1, tck = 0.025)  # save the plot data in a plot object
-points(ellipse_plot, "sites", pch= shape_all, col= color_all, cex = 1.1)  # add points, color & shape vectors that have a specific shape/color for each individual point
+points(ellipse_plot, "sites", pch= shape_all, col= color_all, cex = 1.3)  # add points, color & shape vectors that have a specific shape/color for each individual point
 # add ellipses
 ordiellipse(bray_MDS_noSpiro, groups = ID_all, display = "sites", draw = "lines",
             col = color, kind = "sd", conf = 0.95, lwd = 1.75)
@@ -165,7 +165,7 @@ spec_rich_plot <- ggplot(data = spec_rich, aes(x = sample, y = spec_rich, fill =
         legend.title = element_blank(),
         legend.text.align = 0)
 
-pdf("figures/FigS5_OTU_richness.pdf", 
+pdf("figures/FigS4_OTU_richness.pdf", 
     width = 7, height = 4.5)
 grid.draw(spec_rich_plot)
 dev.off()
@@ -184,7 +184,6 @@ treatment <- as.factor(c(rep("Fresh", 3), rep("Reused", 3)))
 combos <- combn(6,3)
 perm_matrix <- t(rbind(combos[, 1:10], combos[, 20:11]))[2:10, ] # append the combos matrix & transpose so each row is a combination of 1-6; remove the first row because this is the given data set
 
-
 # Anosim
 C323.anosim <- anosim(otutable_rownames_f_relative[2:7, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
@@ -194,13 +193,17 @@ Navi.anosim <- anosim(otutable_rownames_f_relative[16:21, ], grouping = treatmen
 
 
 ## Also test with taking out the Spirochetes since these were contaminants. 
-
 # Anosim
 C323.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[2:7, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
 D046.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[9:14, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
 
 Navi.anosim_no_spiro <- anosim(no_spiro_rownames_f_relative[16:21, ], grouping = treatment, distance = "bray", permutations = perm_matrix)
+
+# Compare bacteria communities among the three algae (combine fresh and reused within each algae)
+# Create data frame for algae
+algae <- as.factor(c(rep("C323", 6), rep("D046", 6)))
+
 
 
 ### Community composition plot at family level ###
@@ -349,7 +352,7 @@ Navi_family_plot <- ggplot(data = filter(summed_families_by_sample_legend, sampl
   grid.draw(family_gridplot)
   
   # Save plot as pdf file. Edit x-axis using visual software. 
-  pdf("figures/Fig3_family_composition.pdf", 
+  pdf("figures/Fig4_family_composition.pdf", 
       width = 7.5, height = 4.5)
   grid.draw(family_gridplot)
   dev.off()  
