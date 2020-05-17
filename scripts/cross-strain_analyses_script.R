@@ -298,7 +298,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(OD_gridplot)
   dev.off()
   
-# Figure S1: Specific growth rate and maximum OD in phase 2 (Round 3) ####
+# Figure S2: Specific growth rate and maximum OD in phase 2 (Round 3) ####
   
   # reorder the x-axis to D046, Navi, C323
   mu_avgs$Algae <- factor(mu_avgs$Algae, levels = c("D046", "Navicula", "C323"))
@@ -358,7 +358,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   mu_maxOD_grid <- rbind(mu_grob, max_OD_grob, size = "first")
   
   # Save plot as pdf file
-  pdf("Figures/FigS1_mu_maxOD_Grid.pdf", 
+  pdf("Figures/FigS2_mu_maxOD_Grid.pdf", 
       width = 4.5, height = 6.5)
   grid.draw(mu_maxOD_grid)
   dev.off()
@@ -614,7 +614,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(nutrients_plot)
   dev.off()
   
-#### Figure S2: Intial nutrient concentrations in phase 2 (Round 3) ####
+#### Figure S1: Intial nutrient concentrations in phase 2 (Round 3) ####
   
   # re-order algae names
   growth_df_avgs$Algae <- factor(growth_df_avgs$Algae, levels = c("D046", "Navicula", "C323"))
@@ -692,7 +692,7 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   init_nuts_grid <- rbind(init_NH4_grob, init_PO4_grob, init_Si_grob, size = "first")
   
   # Save plot as pdf file
-  pdf("Figures/FigS2_init_nuts.pdf", 
+  pdf("Figures/FigS1_init_nuts.pdf", 
       width = 4, height = 7.5)
   grid.draw(init_nuts_grid)
   dev.off()
