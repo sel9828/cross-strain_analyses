@@ -1,5 +1,6 @@
 # cross-strain_analyses
-https://zenodo.org/badge/doi/10.5281/zenodo.3831481.svg
+<a href="https://zenodo.org/badge/latestdoi/182869290"><img src="https://zenodo.org/badge/182869290.svg" alt="DOI"></a>
+
 
 Data organizing, statistical analyses, and data visualization for experimental data and bacteria community data from cross-strain microalgae experiments in reused growth medium.
 
