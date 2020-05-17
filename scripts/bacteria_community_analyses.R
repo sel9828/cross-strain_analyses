@@ -38,7 +38,7 @@ no_spiro_rownames_f_relative <- t(no_spiro_rownames_relative[, 1:(ncol(no_spiro_
     no_spiro_relative_no_inoc <- no_spiro_rownames_f_relative[-c(1, 8, 15), ]
 
 
-# Create a vector to use for differentiating points by color + shape on the figure
+# Create a vector to use for differentiating points by color + shape on within figures
 ID_all <- c("C323 Inoculum", rep("C323 Fresh", 3), rep("C323 Recycled", 3), 
             "D046 Inoculum", rep("D046 Fresh", 3), rep("D046 Recycled", 3), 
             "Navicula Inoculum", rep("Navicula Fresh", 3), rep("Navicula Recycled", 3))
@@ -272,7 +272,7 @@ legend_order <- c ( "Spirochaetaceae",
                    "Cryomorphaceae", "Balneolaceae", # Bacteroidetes
                    "Phyllobacteriaceae", "Hyphomonadaceae", "Rhodobacteraceae", "Rhodospirillaceae", "Erythrobacteraceae", "Other_Alphaproteobacteria", # Alphaproteobacteria
                    "Alteromonadaceae", "Other_Gammaproteobacteria", # Gammaproteobacteria
-                   "Other") # Other (taxa less than 1% of total dataset and not belonging to a group below)
+                   "Other") # Other (taxa less than 1% of total dataset and not belonging to a group above)
 
 summed_families_by_sample_legend$legend_label <- factor(summed_families_by_sample_legend$legend_label, levels = legend_order)
 
@@ -362,6 +362,3 @@ Navi_family_plot <- ggplot(data = filter(summed_families_by_sample_legend, sampl
   grid.draw(family_gridplot)
   dev.off()  
   
-  
-
-
