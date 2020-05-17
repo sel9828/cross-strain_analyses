@@ -1,7 +1,7 @@
 # Project: Microalgae Cross-strain Growth Medium Reuse Experiment
 # Author: Sarah Loftus, sarah.e.loftus@gmail.com
 
-# This code carries out differential abundance analyses on bacteria community functional pathways data generated from picrust2.
+# This code carries out differential abundance analyses on bacteria community MetaCyc pathways data generated from picrust2.
 # Notes on Deseq2: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
 # Input data and metadata are available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v2
@@ -242,3 +242,4 @@ all_res_sig_pi2_noSpiro %>%
 all_res_sig_pi2_noSpiro %>% 
   filter(is.na(padj_C323)) %>% 
   filter(is.na(padj_D046)) -> Navi_unique_sig_pi2_noSpiro
+

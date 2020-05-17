@@ -1,7 +1,7 @@
 # Project: Microalgae Cross-strain Growth Medium Reuse Experiment
 # Author: Sarah Loftus, sarah.e.loftus@gmail.com
 
-# This code organizes, analyses, and visualizes data from mircoalgae cross-strain reused medium experiments. 
+# This code organizes, analyses, and visualizes data from microalgae cross-strain reused medium experiments. 
 
 # Input data and metadata are also available on Figshare: https://doi.org/10.6084/m9.figshare.7831913.v2
 
@@ -697,7 +697,6 @@ Navi_max_OD_test <- t.test(max_OD_data$max_OD[max_OD_data$Algae == 'Navicula' & 
   grid.draw(init_nuts_grid)
   dev.off()
 
-  
 # Figure 3: DOC ####
   
   D046_DOC_plot <- ggplot(data = growth_df_avgs[growth_df_avgs$Algae == "D046" & !(is.na(growth_df_avgs$DOC_mean)), ], 

@@ -115,41 +115,41 @@ res_D046_sig <- subset(res_D046_MLE, padj < a)
 res_Navi_sig <- subset(res_Navi_MLE, padj < a)
 
 
-# Merge the log2FoldChange results from the three algae to make a heatmap (not published)
-res_C323_log2 <- as.data.frame(res_C323_MLE)
-res_C323_log2$OTU <- rownames(res_C323_log2)
-res_C323_log2 %>%
-  select(OTU, C323_log2 = log2FoldChange) -> C323_log2
+# # Merge the log2FoldChange results from the three algae to make a heatmap (not published)
 
-res_D046_log2 <- as.data.frame(res_D046_MLE)
-res_D046_log2$OTU <- rownames(res_D046_log2)
-res_D046_log2 %>%
-  select(OTU, D046_log2 = log2FoldChange) -> D046_log2
-
-res_Navi_log2 <- as.data.frame(res_Navi_MLE)
-res_Navi_log2$OTU <- rownames(res_Navi_log2)
-res_Navi_log2 %>%
-  select(OTU, Navi_log2 = log2FoldChange) -> Navi_log2
-
-D046_log2 %>%
-  full_join(Navi_log2, by = "OTU") %>%
-  full_join(C323_log2, by = "OTU") -> all_algae_log2
-
-rownames(all_algae_log2) <- all_algae_log2$OTU
-
-library(RColorBrewer)
-my_palette <- colorRampPalette(rev(brewer.pal(11,"Spectral")))(100)
-
-png("figures/deseq2_log2_heatmap.png",
-    width = 7*300,
-    height = 6.5*300,
-    res = 300,            # 300 pixels per inch
-    pointsize = 8)
-heatmap.2(as.matrix(all_algae_log2[  ,2:4]),
-          density.info = "none", trace = "none", dendrogram = "none",
-          na.color = "white", Colv = FALSE, Rowv = FALSE, col = my_palette,
-          key = T, labCol = NA, key.xlab = "Log2 Fold Change", key.title = "", keysize = 1)
-dev.off()
-
+# res_C323_log2 <- as.data.frame(res_C323_MLE)
+# res_C323_log2$OTU <- rownames(res_C323_log2)
+# res_C323_log2 %>%
+#   select(OTU, C323_log2 = log2FoldChange) -> C323_log2
+# 
+# res_D046_log2 <- as.data.frame(res_D046_MLE)
+# res_D046_log2$OTU <- rownames(res_D046_log2)
+# res_D046_log2 %>%
+#   select(OTU, D046_log2 = log2FoldChange) -> D046_log2
+# 
+# res_Navi_log2 <- as.data.frame(res_Navi_MLE)
+# res_Navi_log2$OTU <- rownames(res_Navi_log2)
+# res_Navi_log2 %>%
+#   select(OTU, Navi_log2 = log2FoldChange) -> Navi_log2
+# 
+# D046_log2 %>%
+#   full_join(Navi_log2, by = "OTU") %>%
+#   full_join(C323_log2, by = "OTU") -> all_algae_log2
+# 
+# rownames(all_algae_log2) <- all_algae_log2$OTU
+# 
+# library(RColorBrewer)
+# my_palette <- colorRampPalette(rev(brewer.pal(11,"Spectral")))(100)
+# 
+# png("figures/deseq2_log2_heatmap.png",
+#     width = 7*300,
+#     height = 6.5*300,
+#     res = 300,            # 300 pixels per inch
+#     pointsize = 8)
+# heatmap.2(as.matrix(all_algae_log2[  ,2:4]),
+#           density.info = "none", trace = "none", dendrogram = "none",
+#           na.color = "white", Colv = FALSE, Rowv = FALSE, col = my_palette,
+#           key = T, labCol = NA, key.xlab = "Log2 Fold Change", key.title = "", keysize = 1)
+# dev.off()
 
 
